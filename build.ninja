@@ -1,0 +1,4 @@
+rule pandoc_beamer
+  command = (cd slides && pandoc -st beamer ../$in -o ../$out)
+
+build slides/slides.pdf: pandoc_beamer slides/slides.md
