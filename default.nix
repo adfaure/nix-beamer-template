@@ -31,6 +31,7 @@ let
         "^img/.*.pdf"
         "^slides$"
         "^slides/.*.md$"
+        "^slides/.*.bib$"
         "^slides/.*.sty$"
       ];
       buildPhase = ''
@@ -45,10 +46,10 @@ let
 
     autorebuild-shell = pkgs.mkShell rec {
       name = "autobuild-shell";
-      buildInputs = [ pkgs.entr pkgs.llpp ] ++ slides.nativeBuildInputs;
-      shellHook = ''
-        ls build.ninja slides/*.md slides/*.sty fig/*.asy | entr -s "ninja ; killall -HUP --regexp '(.*bin/)?llpp' && exit"
-      '';
+      buildInputs = [ pkgs.entr pkgs.llpp pkgs.ninja pkgs.biber pkgs.plantuml ] ++ slides.nativeBuildInputs;
+       shellHook = ''
+         ls build.ninja slides/*.md slides/*.sty fig/*.asy | entr -s "ninja ; killall -HUP --regexp '(.*bin/)?llpp' && exit"
+       '';
     };
   };
 in jobs

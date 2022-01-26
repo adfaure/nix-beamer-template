@@ -1,4 +1,13 @@
 rule pandoc_beamer
-  command = (cd slides && pandoc -st beamer ../$in -o ../$out)
+  command = (cd slides && pandoc --biblatex --bibliography=bibliography.bib -o slides/ -st beamer ../$in -o ../$out)
 
-build slides/slides.pdf: pandoc_beamer slides/slides.md
+rule pdflatex
+  command = (cd slides && pdflatex -output-directory=. slides.tex && biber slides.bcf && pdflatex -output-directory=. slides.tex)
+
+rule pandoc_beamer_latex
+  command = (cd slides && pandoc --biblatex --bibliography=bibliography.bib -o slides/ -st beamer ../$in -o ../$out)
+
+
+build slides/slides.tex: pandoc_beamer_latex slides/slides.md
+
+build slides/slides.pdf: pdflatex slides/slides.tex

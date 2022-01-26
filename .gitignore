@@ -1,1 +1,13 @@
 .ninja_*
+slides/*.pdf
+slides/*.aux
+slides/*.bbl
+slides/*.bcf
+slides/*.blg
+slides/*.log
+slides/*.nav
+slides/*.run.xml
+slides/*.snm
+slides/*.tex
+slides/*.toc
+slides/*.vrb
