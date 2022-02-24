@@ -44,7 +44,7 @@ let
       '';
     };
 
-    autorebuild-shell = pkgs.mkShell rec {
+    autorebuild_shell = pkgs.mkShell rec {
       name = "autobuild-shell";
       buildInputs = [ pkgs.entr pkgs.llpp pkgs.ninja pkgs.biber pkgs.plantuml ] ++ slides.nativeBuildInputs;
        shellHook = ''
