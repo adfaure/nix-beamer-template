@@ -10,6 +10,7 @@ header-includes:
   ```{=latex}
   \usepackage{tikz}
   \usepackage{adjustbox}
+  \usepackage[normalem]{ulem}
   \usetikzlibrary{arrows,calc,intersections,decorations.pathreplacing,chains,matrix,positioning,scopes,shapes.misc,shapes.symbols,patterns, decorations.pathmorphing}
   \usepackage{subcaption}
   \setbeamertemplate{footline}[frame number]
@@ -377,6 +378,8 @@ header-includes:
 \end{frame}
 ```
 
+# Ptask validation
+
 ## Experimental methodology
 
 ```{=latex}
@@ -407,4 +410,375 @@ header-includes:
   \end{column}
 \end{columns}
 \blfootnote{Source code and data: \url{https://gitlab.inria.fr/adfaure/ptask\_tit\_eval}}
+```
+
+## Platform setup
+
+```{=latex}
+\only<1>{
+  \textbf{\large Platform network\\}
+  \vspace{1em}
+  \centering
+  \includegraphics[width=0.8\textwidth]{../img/ptask_network_setup}
+}
+\only<2>{
+  \textbf{\large Reconfigured network\\}
+  \vspace{1em}
+  \centering
+  \includegraphics[width=0.8\textwidth]{../img/ptask_logical_network_setup}
+}
+
+\begin{columns}
+  \begin{column}{0.6\textwidth}
+  \begin{block}{Network without contention}
+    \textbf{Creating on contention point}
+    \begin{itemize}
+      \item Two group of machines
+      \item Split in two subnetwork
+      \item Inter group communications uses the routing nodes
+    \end{itemize}
+  \end{block}
+  \end{column}
+  \begin{column}{0.4\textwidth}
+    \textbf{Plateformes Grid'5000 :}
+      \begin{itemize}
+        \item \textbf{Grisou} et \textbf{Paravance}
+        \item Homogeneous - \emph{\footnotesize Dell poweredge R640}
+        \item Not the same switch
+      \end{itemize}
+  \end{column}
+\end{columns}
+```
+
+## Executions: Application and interferences
+
+```{=latex}
+\begin{columns}
+  \begin{column}{0.5\textwidth}
+    \\ \vspace{0.3em}
+    \textbf{Application réelle}
+    \begin{itemize}
+      \item Homogenous application
+        \begin{itemize}
+          \item Cycles : communications + compute
+        \end{itemize}
+      \item Distributed matrix
+      \item 8 nodes per group (16 core / node)
+      \item Différent parameters
+        \begin{itemize}
+          \item Matrix splitting
+          \item Sync / Async broadcasts
+        \end{itemize}
+    \end{itemize}
+  \end{column}
+  \begin{column}{0.5\textwidth}
+    \textbf{Interférences\\}
+    \begin{itemize}
+      \item Tcpkali = opensource software
+      \item Generates interferences
+      \item $60~s$ periods
+      \item $\%$ interferences: ($0~\%$, $25~\%$, .. $100~\%$)
+      \begin{itemize}
+        \item $25~\%$ : $15~s$ interférences / $45~s$ idle
+        \item $25~\%$: $15~s$ interférences / $45~s$ idle
+        % \item $50~\%$: $30~s$ interférences / $30~s$ idle
+        % \item $75~\%$: $45~s$ interférences / $15~s$ idle
+        % \item $100~\%$: $45~s$ interférences / $15~s$ idle
+      \end{itemize}
+    \end{itemize}
+  \end{column}
+\end{columns}
+\vspace{1em}
+\centering
+\includegraphics[width=.9\textwidth]{../img/ptask_logical_network_setup_interferences}
+```
+
+## Application behavior and configuration
+
+```{=latex}
+\begin{columns}
+   \begin{column}{0.33\textwidth}
+     \begin{itemize}
+       \item  homogeneous network
+       \item \small $0~\%$ interferences = faster
+       \item \small $100~\%$ interferences = slower
+     \end{itemize}
+    \vspace{1.5em}
+    \textbf{Application configuration :\\}
+    \begin{itemize}
+      \item 50 sub-matrix
+      \item Async Broadcasts
+    \end{itemize}
+
+  \end{column}
+  \begin{column}{0.67\textwidth}
+    \includegraphics[width=\textwidth]{../img/paravance_ibcast_50sdiv_defense}
+  \end{column}
+\end{columns}
+```
+
+
+## ptask generation: resources consumption
+
+```{=latex}
+\hspace{-1.3em} \textbf{Simulation needs : \\ computation and communication amounts}
+\begin{columns}
+  \begin{column}{0.6\textwidth}
+    \begin{block}{Computation array}
+      \begin{itemize}
+        \item Computed from the algorithm
+        \item Depends on the matrix size:
+      \end{itemize}
+      $$\left(\frac{matrix\_size}{\sqrt{nb\_processes}}\right)^{3}$$
+    \end{block}
+   \begin{block}{Communication matrix}
+      \textbf{Depends on the broadcast algorithm}
+      \begin{itemize}
+        \item end-to-end $\ne$ peer-to-peer
+        \item Simgrid and SMPI $\rightarrow$ Tracing peer-to-peer
+      \end{itemize}
+    \end{block}
+  \end{column}
+  \begin{column}{0.4\textwidth}
+    \includegraphics[width=\textwidth]{../img/CommMatrix.pdf}
+  \end{column}
+\end{columns}
+```
+
+## Results: Reality versus simulation
+
+```{=latex}
+  \centering
+  \includegraphics[width=.9\textwidth]{../img/ptask_comparison}
+  \\ ~
+  \\ Running times don't match $\rightarrow$
+  \textbf{The behavior match \\}
+```
+
+## Application progress
+
+```{=latex}
+\definecolor{cent}{RGB}{197,228,69}
+\definecolor{zero}{RGB}{78, 14, 93}
+\definecolor{quart}{RGB}{56, 185, 119}
+\definecolor{half}{RGB}{48, 138, 148}
+\definecolor{tier}{RGB}{62, 75, 137,}
+
+\begin{columns}
+  \begin{column}{0.37\textwidth}
+    \textbf{Internal monitoring}
+    {
+    \begin{itemize}
+      \item \textcolor{zero}{$0~\%$ interferences}
+      \item \textcolor{quart}{$25~\%$ interferences}
+      \item \textcolor{half}{$50~\%$ interferences}
+      \item \textcolor{tier}{$75~\%$ interferences}
+      \item \textcolor{cent}{$100~\%$ interferences}
+    \end{itemize}}
+    ~ \\
+    \textbf{Homogeneous progress \\}
+    2 cadences distinctes :
+    \begin{itemize}
+      \item Fast with interferences
+      \item Slow with interferences
+    \end{itemize}
+  \end{column}
+  \begin{column}{0.66\textwidth}
+    \\ \centering \textbf{Grisou} \\
+    \includegraphics[width=1\textwidth]{../img/grisou_pdgemm_real_progress}
+  \end{column}
+\end{columns}
+```
+
+## Ptask conclusion (of my thesis)
+
+```{=latex}
+\begin{columns}
+  \begin{column}{0.5\textwidth}
+    \begin{block}{1st step towards validation}
+      \begin{itemize}
+        \item Accurate without interference
+        \item Interferences look good (spoiler they are not)
+      \end{itemize}
+    \end{block}
+
+    \begin{alertblock}{Évolution nécessaire}
+      Network degradation needs calibration \\ 
+      Two platforms : 2 results  \vspace{0.7em}\\
+      \textbf{How to calibrateb ?}
+      \begin{itemize}
+        \item Application profiling ?
+        \item Add parameters in the model ?
+      \end{itemize}
+    \end{alertblock}
+  \end{column}
+  \begin{column}{0.5\textwidth}
+    \textbf{Next steps}
+    \begin{itemize}
+      \item Why platforms have different behavior ?
+      \item How to calibrate the interferences ?
+    \end{itemize}
+  \end{column}
+\end{columns}
+```
+
+# Improved version
+
+## Improved version of the experiment
+
+```{=latex}
+\textbf{H1: The sharing algorithm in paravance is different}
+```
+- Grisou has a behavior that looks normal
+
+- Maybe paravance has a different sharing algorithm
+
+```{=latex}
+\begin{block}{First improvement}
+Interferences with more complexe communication pattern
+\end{block}
+```
+
+```{=latex}
+\textbf{H2: How to calibrate the interferences ?}
+```
+
+- The number of tcp connection is important
+    - overlooked in my thesis...
+
+- The interferences used 100 TCP connections
+
+```{=latex}
+\begin{block}{Second improvement}
+Number of tcp connection variations
+\end{block}
+```
+
+## Different patterns of interferences
+
+```{=latex}
+\begin{columns}
+  \begin{column}{0.5\textwidth}
+
+    \textbf{Interferences now use several nodes}
+    \begin{block}{Generated with parameters}
+      \begin{itemize}
+        \item Number of connections
+        \item Probability to connect two nodes
+      \end{itemize}
+    \end{block}
+
+    \begin{alertblock}{Other modifications}
+      \begin{itemize}
+        \item Always 100 \% of intereferences
+        \item Homogeneous progess $\rightarrow$ application stopped early
+      \end{itemize}
+    \end{alertblock}
+
+   \end{column}
+  \begin{column}{0.5\textwidth}
+   \textbf{Two patterns used}
+   \\ \vspace{1em}
+   \includegraphics[width=\textwidth]{../img/tcp_topology.pdf}
+  \end{column}
+\end{columns}
+```
+
+## Results: Number of connections
+
+```{=latex}
+\includegraphics[width=\textwidth]{../img/datamovett_nb_connections.pdf}
+```
+
+## Results: Number of pairs
+
+```{=latex}
+\includegraphics[width=\textwidth]{../img/datamovett_nb_pair.pdf}
+```
+
+## Words on difference between Paravance and Grisou
+
+- **Grisou**
+    - Sensitive to the number of TCP connections
+    - Not impacted by their location
+
+```{=latex}
+\vfill
+```
+
+- **Paravance**
+    - Sensitive to the number of different pair communicating
+
+```{=latex}
+\vfill
+```
+
+## Results: Ptask vs Reality - number of connection variations
+
+```{=latex}
+\begin{columns}
+  \begin{column}{0.28\textwidth}
+   \textbf{Comparison between:}
+   \begin{itemize}
+     \item Reality
+     \item Ptask
+     \item SMPI
+   \end{itemize}
+
+   \hspace{\fill}
+
+   \textbf{Variating the number of connections}
+   \end{column}
+  \begin{column}{0.72\textwidth}
+    \includegraphics[width=\textwidth]{../img/datamovett_comparison.pdf}
+  \end{column}
+\end{columns}
+```
+
+## Conclusion
+
+
+```{=latex}
+\begin{block}{Grisou vs Paravance}
+```
+- Paravance has a different sharing behavior
+  - **Not yet supported in SimGrid**
+
+- Different switch with different sharing
+- Related to how TCP handles contentions
+    - filtering on hosts and omits the port number ?
+
+```{=latex}
+\end{block}
+```
+
+
+```{=latex}
+\begin{columns}
+  \begin{column}{0.007\textwidth}
+  \end{column}
+  \begin{column}{0.593\textwidth}
+      \begin{block}{Calibration of the interferences}
+        \begin{itemize}
+          \item problem with the number of connections
+          \item \textbf{the inner connections are not taken into account}
+        \end{itemize}
+      \end{block}
+  \end{column}
+  \begin{column}{0.4\textwidth}
+    \includegraphics[width=0.7\textwidth]{../img/CommMatrix_shrink.pdf}
+  \end{column}
+\end{columns}
+```
+
+## Results: Total bandwidth
+
+```{=latex}
+\only<1>{
+  \includegraphics[width=\textwidth]{../img/datamovett_total_bw_nb_conn}
+}
+
+\only<2>{
+  \includegraphics[width=\textwidth]{../img/datamovett_total_bw_nb_pair}
+}
 ```
