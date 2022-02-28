@@ -10,6 +10,8 @@ header-includes:
   ```{=latex}
   \usepackage{tikz}
   \usepackage{adjustbox}
+  \usepackage{multicol}
+  \usepackage{lmodern}
   \usepackage[normalem]{ulem}
   \usetikzlibrary{arrows,calc,intersections,decorations.pathreplacing,chains,matrix,positioning,scopes,shapes.misc,shapes.symbols,patterns, decorations.pathmorphing}
   \usepackage{subcaption}
@@ -38,12 +40,30 @@ header-includes:
   \newcommand{\ptask}{\emph{ptask~}}
   \newcommand{\Ptasks}{\emph{Ptasks~}}
   \newcommand{\ptasks}{\emph{ptasks~}}
+
+  \setbeamertemplate{frametitle}{%
+    \nointerlineskip%
+    \begin{beamercolorbox}[wd=\paperwidth,ht=2.0ex,dp=0.6ex]{frametitle}
+        \hspace*{1ex}\insertframetitle%
+    \end{beamercolorbox}%
+  }
+
+  \AtBeginSubsection[]
+  {
+    \begin{frame}<beamer>
+     % \begin{multicols}{2}
+     \tableofcontents[currentsection,hideothersubsections]
+     % \end{multicols}
+    \end{frame}
+  }
   ```
 ---
 
 # Introduction
 
-## HPC scheduling
+## Hpc and scheduling
+
+### HPC scheduling
 
 ```{=latex}
   \begin{columns}
@@ -52,44 +72,50 @@ header-includes:
       \includegraphics[width=\textwidth,keepaspectratio]{../img/rjms_overview}
     \end{column}
     \begin{column}{0.44\textwidth}
-      Plateforme partagée $\rightarrow$ plusieurs applications\\
+      Shared platform $\rightarrow$ multiple applications\\
 
       \vspace{1em}
 
       {\small RJMS :}
       \begin{itemize}
-        \item Requêtes utilisateurs = jobs
-        \item Ordonnancement et placement
-        \item Gestion de la plateforme
+        \item User requests = jobs
+        \item Scheduling and placement
+        \item Platform management
         \begin{itemize}
-          \item Contrôle l'exécution des jobs
-          \item \emph{Monitoring} des noeuds
+          \item Control jobs executions
+          \item Node \emph{monitoring}
         \end{itemize}
-        \item Logiciel complexe (milliers de lignes de code)
+        \item Complexe piece of code
+        \begin{itemize}
+          \item Lots of loc
+          \item System programming
+          \item Distributed progamming
+        \end{itemize}
       \end{itemize}
     \end{column}
   \end{columns}
 ```
 
-## How Study scheduling ?
-
-- Scheduling is not anymore (only) about rectangles
+### How Study scheduling ?
 
 - Most cluster uses simple policy (FCFS for instance)
     - With a backfilling mechanism
+
+- Scheduling is not anymore (only) about rectangles
 
 - Applications performance depends:
   - the capacity of the platform
   - their placement on the platform
   - and on the other application running
 
-### Other points of concern arise at the scheduling level
+#### Other points of concern arise at the scheduling level
 
 - Energy optimization / management
 - IO management
 
+## Batsim
 
-## Batsim: (Successful?) attempt to concentrate effort on RJMS simulation
+### Batsim: (Successful?) attempt to concentrate effort on RJMS simulation
 
 ```{=latex}
 \begin{columns}
@@ -101,8 +127,11 @@ header-includes:
 ```
 
 - Good idea in software engineering
+  - on top of Simgrid
+      - platform
+      - applications
   - separation of concerns
-  - use Simgrid (platform + applications)
+      - isolated scheduling
 
 ```{=latex}
    \begin{block}{"Realistic" view}
@@ -117,7 +146,7 @@ header-includes:
 
 ```
 
-## Batsim with SimGrid: Application profiles
+### Batsim with SimGrid: Application profiles
 
 ```{=latex}
 
@@ -158,7 +187,7 @@ header-includes:
 
     \vspace{1.5em}
 
-    \textbf{Liste des jobs}
+    \textbf{Listof jobs}
       \begin{itemize}
         \item Release date : $r_j$
         \item Number of resources : $q_j$
@@ -189,7 +218,9 @@ header-includes:
 
 # Profiles
 
-## Profile Delay
+## List of profiles
+
+### Profile Delay
 ```{=latex}
   \begin{columns}
     \begin{column}{0.5\textwidth}
@@ -221,7 +252,7 @@ header-includes:
   \end{columns}
 ```
 
-## Profile Time Independent Trace (TiT)
+### Profile Time Independent Trace (TiT)
 
 ```{=latex}
   \begin{columns}
@@ -262,7 +293,7 @@ header-includes:
   \end{columns}
 ```
 
-## Profile Ptask
+### Profile Ptask
 
 ```{=latex}
   \begin{columns}
@@ -283,7 +314,7 @@ header-includes:
           ~ \\
           \textbf{Model inputs\\}
           \begin{itemize}
-          \item Utilise plusieurs ressources
+          \item Uses two resources
             \begin{itemize}
               \item Array of computation amounts
               \item Communication matrix
@@ -291,29 +322,24 @@ header-includes:
       \end{itemize}
     \end{column}
     \begin{column}{0.5\textwidth}
-        \begin{block}{Properties}
-          \begin{itemize}
-            \item \textcolor{blue}{$+$ } Effets intra / inter jobs
-            \item \textcolor{blue}{$+$ } Rapide
-            \item \textcolor{red}{$-$ } Pas évalué avant cette thèse
-            \item Réaliste quand : \textbf{?}
-            % \begin{itemize}
-            %   \item Cluster \textbf{hétéro}gène
-            %   \item Contention intra $\&$ inter job
-            %   \item Compromis performances / précision
-            % \end{itemize}
-          \end{itemize}
-        \end{block}
-        % \begin{flushright}
-        %   \vspace{5em}
-        %   \small
-        %   \emph{Détaillé dans la prochaine section...}
-        % \end{flushright}
+      \begin{block}{Properties}
+        \begin{itemize}
+          \item \textcolor{blue}{$+$ } Intra / inter effects
+          \item \textcolor{blue}{$+$ } Fast
+          \item \textcolor{red}{$-$ } Not evaluated before
+          % \item Realistic when : \textbf{?}
+        \end{itemize}
+        \centering
+      \end{block}
+      \centering
+      \includegraphics[width=0.6\textwidth]{../img/CommMatrix.pdf}
     \end{column}
   \end{columns}
 ```
 
-## Model performances
+## Choosing a model
+
+### Model performances
 
 ```{=latex}
   \centering
@@ -321,7 +347,7 @@ header-includes:
   \blfootnote{\footnotesize Replay at: \url{https://gitlab.inria.fr/adfaure/ptask_tit_eval}}
 ```
 
-## How to choose a model ?
+### How to choose a model ?
 
 ```{=latex}
   \centering
@@ -380,7 +406,9 @@ header-includes:
 
 # Ptask validation
 
-## Experimental methodology
+## Methodology and platform setup
+
+### Experimental methodology
 
 ```{=latex}
 \begin{itemize}
@@ -412,7 +440,7 @@ header-includes:
 \blfootnote{Source code and data: \url{https://gitlab.inria.fr/adfaure/ptask\_tit\_eval}}
 ```
 
-## Platform setup
+### Platform setup
 
 ```{=latex}
 \only<1>{
@@ -450,7 +478,7 @@ header-includes:
 \end{columns}
 ```
 
-## Executions: Application and interferences
+### Executions: Application and interferences
 
 ```{=latex}
 \begin{columns}
@@ -493,7 +521,7 @@ header-includes:
 \includegraphics[width=.9\textwidth]{../img/ptask_logical_network_setup_interferences}
 ```
 
-## Application behavior and configuration
+### Application behavior and configuration
 
 ```{=latex}
 \begin{columns}
@@ -517,8 +545,7 @@ header-includes:
 \end{columns}
 ```
 
-
-## ptask generation: resources consumption
+### ptask generation: resources consumption
 
 ```{=latex}
 \hspace{-1.3em} \textbf{Simulation needs : \\ computation and communication amounts}
@@ -545,7 +572,9 @@ header-includes:
 \end{columns}
 ```
 
-## Results: Reality versus simulation
+## Results and conclusion
+
+### Results: Reality versus simulation
 
 ```{=latex}
   \centering
@@ -555,7 +584,7 @@ header-includes:
   \textbf{The behavior match \\}
 ```
 
-## Application progress
+### Application progress
 
 ```{=latex}
 \definecolor{cent}{RGB}{197,228,69}
@@ -590,7 +619,7 @@ header-includes:
 \end{columns}
 ```
 
-## Ptask conclusion (of my thesis)
+### Ptask conclusion (of my thesis)
 
 ```{=latex}
 \begin{columns}
@@ -605,7 +634,7 @@ header-includes:
     \begin{alertblock}{Évolution nécessaire}
       Network degradation needs calibration \\ 
       Two platforms : 2 results  \vspace{0.7em}\\
-      \textbf{How to calibrateb ?}
+      \textbf{How to calibrate the model ?}
       \begin{itemize}
         \item Application profiling ?
         \item Add parameters in the model ?
@@ -624,7 +653,9 @@ header-includes:
 
 # Improved version
 
-## Improved version of the experiment
+## New setup
+
+### Improved version of the experiment
 
 ```{=latex}
 \textbf{H1: The sharing algorithm in paravance is different}
@@ -654,7 +685,7 @@ Number of tcp connection variations
 \end{block}
 ```
 
-## Different patterns of interferences
+### Different patterns of interferences
 
 ```{=latex}
 \begin{columns}
@@ -684,19 +715,21 @@ Number of tcp connection variations
 \end{columns}
 ```
 
-## Results: Number of connections
+## Results and conclusion
+
+### Results: Number of connections
 
 ```{=latex}
 \includegraphics[width=\textwidth]{../img/datamovett_nb_connections.pdf}
 ```
 
-## Results: Number of pairs
+### Results: Number of pairs
 
 ```{=latex}
 \includegraphics[width=\textwidth]{../img/datamovett_nb_pair.pdf}
 ```
 
-## Words on difference between Paravance and Grisou
+### Words on difference between Paravance and Grisou
 
 - **Grisou**
     - Sensitive to the number of TCP connections
@@ -713,7 +746,7 @@ Number of tcp connection variations
 \vfill
 ```
 
-## Results: Ptask vs Reality - number of connection variations
+### Results: Ptask vs Reality - number of connection variations
 
 ```{=latex}
 \begin{columns}
@@ -735,16 +768,17 @@ Number of tcp connection variations
 \end{columns}
 ```
 
-## Conclusion
+### Conclusion
 
 
 ```{=latex}
 \begin{block}{Grisou vs Paravance}
 ```
+
+- Different switch with different sharing
 - Paravance has a different sharing behavior
   - **Not yet supported in SimGrid**
 
-- Different switch with different sharing
 - Related to how TCP handles contentions
     - filtering on hosts and omits the port number ?
 
@@ -755,23 +789,24 @@ Number of tcp connection variations
 
 ```{=latex}
 \begin{columns}
-  \begin{column}{0.007\textwidth}
+  \begin{column}{0.001\textwidth}
   \end{column}
-  \begin{column}{0.593\textwidth}
+  \begin{column}{0.699\textwidth}
       \begin{block}{Calibration of the interferences}
         \begin{itemize}
-          \item problem with the number of connections
-          \item \textbf{the inner connections are not taken into account}
+          \item Problem with the number of connections
+          \item \textbf{Inner connections are not taken into account} $\rightarrow$ wrong sharing
+          \item Arnaud and Bruno are working on a brand new model
         \end{itemize}
       \end{block}
   \end{column}
-  \begin{column}{0.4\textwidth}
+  \begin{column}{0.3\textwidth}
     \includegraphics[width=0.7\textwidth]{../img/CommMatrix_shrink.pdf}
   \end{column}
 \end{columns}
 ```
 
-## Results: Total bandwidth
+### Results: Total bandwidth
 
 ```{=latex}
 \only<1>{
